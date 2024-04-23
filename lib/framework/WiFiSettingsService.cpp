@@ -49,6 +49,8 @@ void WiFiSettingsService::initWiFi()
 
 void WiFiSettingsService::begin()
 {
+    _socket->registerEvent(EVENT_RSSI);
+
     _httpEndpoint.begin();
 }
 
@@ -214,7 +216,7 @@ void WiFiSettingsService::updateRSSI()
 {
     char buffer[16];
     snprintf(buffer, sizeof(buffer), WiFi.isConnected() ? "%d" : "disconnected", WiFi.RSSI());
-    _socket->emit("rssi", buffer);
+    _socket->emit(EVENT_RSSI, buffer);
 }
 
 void WiFiSettingsService::onStationModeDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)

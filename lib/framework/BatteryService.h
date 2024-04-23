@@ -16,10 +16,14 @@
 #include <EventSocket.h>
 #include <JsonUtils.h>
 
+#define EVENT_BATTERY "battery"
+
 class BatteryService
 {
 public:
     BatteryService(EventSocket *socket);
+
+    void begin();
 
     void updateSOC(float stateOfCharge)
     {

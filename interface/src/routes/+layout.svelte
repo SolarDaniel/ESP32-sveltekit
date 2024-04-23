@@ -34,7 +34,6 @@
 	});
 
 	const addEventListeners = () => {
-		socket.on('analytics', handleAnalytics);
 		socket.on('open', handleOpen);
 		socket.on('close', handleClose);
 		socket.on('error', handleError);
@@ -43,8 +42,9 @@
 		socket.on('successToast', handleSuccessToast);
 		socket.on('warningToast', handleWarningToast);
 		socket.on('errorToast', handleErrorToast);
-		socket.on('battery', handleBattery);
-		socket.on('download_ota', handleOAT);
+		if ($page.data.features.analytics) socket.on('analytics', handleAnalytics);
+		if ($page.data.features.battery) socket.on('battery', handleBattery);
+		if ($page.data.features.download_firmware) socket.on('otastatus', handleOAT);
 	};
 
 	const removeEventListeners = () => {
@@ -57,7 +57,7 @@
 		socket.off('warningToast', handleWarningToast);
 		socket.off('errorToast', handleErrorToast);
 		socket.off('battery', handleBattery);
-		socket.off('download_ota', handleOAT);
+		socket.off('otastatus', handleOAT);
 	};
 
 	async function validateUser(userdata: userProfile) {
@@ -79,10 +79,12 @@
 
 	const handleOpen = () => {
 		notifications.success('Connection to device established', 5000);
-		telemetry.setRSSI('found');
 	};
 
-	const handleClose = () => notifications.error('Connection to device lost', 5000);
+	const handleClose = () => {
+		notifications.error('Connection to device lost', 5000);
+		telemetry.setRSSI('lost');
+	};
 
 	const handleError = (data: any) => console.error(data);
 

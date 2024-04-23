@@ -19,6 +19,7 @@
 #include <EventSocket.h>
 
 #define MAX_ESP_ANALYTICS_SIZE 1024
+#define EVENT_ANALYTICS "analytics"
 #define ANALYTICS_INTERVAL 2000
 
 class AnalyticsService
@@ -28,6 +29,8 @@ public:
 
     void begin()
     {
+        _socket->registerEvent(EVENT_ANALYTICS);
+
         xTaskCreatePinnedToCore(
             this->_loopImpl,            // Function that should be called
             "Analytics Service",        // Name of the task (for debugging)
@@ -61,7 +64,7 @@ protected:
             doc["core_temp"] = temperatureRead();
 
             serializeJson(doc, message);
-            _socket->emit("analytics", message);
+            _socket->emit(EVENT_ANALYTICS, message);
 
             vTaskDelayUntil(&xLastWakeTime, ANALYTICS_INTERVAL / portTICK_PERIOD_MS);
         }
